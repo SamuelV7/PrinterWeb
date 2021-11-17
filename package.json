@@ -9,12 +9,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.19.0",
-    "express": "^4.17.1",
-    "express-fileupload": "^1.2.0",
-    "i": "^0.3.6",
-    "multer": "^1.4.2",
-    "npm": "^6.14.9",
-    "printer": "^0.4.0"
+    "body-parser": "latest",
+    "express": "latest",
+    "express-fileupload": "latest",
+    "i": "latest",
+    "multer": "latest",
+    "npm": "latest",
+    "printer": "latest"
   }
 }
