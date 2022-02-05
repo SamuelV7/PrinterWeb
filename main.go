@@ -24,6 +24,36 @@ func printFile(pathOfFile string) {
 		fmt.Println(err)
 	}
 }
+func multipleFiles(r *http.Request) {
+	// setting the max size
+	err := r.ParseMultipartForm(200 << 20)
+	// handle err
+	if err != nil {
+		fmt.Println(err)
+	}
+	// list of files from the form
+	var filesList []*multipart.FileHeader
+	// iterate through them
+	for _, fh := range r.MultipartForm.File["uploadFile"] {
+		// append files to lise
+		filesList = append(filesList, fh)
+		// printing to console, fileName, size, and header
+		fmt.Printf("Uploaded File: %+v\n", fh.Filename)
+		fmt.Printf("FileSize: %+v\n", fh.Size)
+		fmt.Printf("MIME Header: %+v\n", fh.Header)
+		// add timeToFileName
+		tempFileName := addTimeToFileName(fh.Filename)
+		// create and Write each File
+		//getting the file from file.Header
+		theFile, _ := fh.Open()
+		// passing the file along with the file name to save it as
+		createAndWriteFile(tempFileName, theFile)
+		fmt.Println("Successfully created the file")
+		// printing
+		go printFile(tempFileName)
+		// print each one of the files
+	}
+}
 
 // need to refactor code into smaller function
 func pdfFileUpload(res http.ResponseWriter, r *http.Request) {
@@ -34,30 +64,8 @@ func pdfFileUpload(res http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if r.Method == "POST" {
-		//hopefully this makes 200MB the max limit!
-		r.ParseMultipartForm(200 << 20)
-		//Make this a multiple file so the file will be array of files
-		file, handler, err := r.FormFile("uploadFile")
-		if err != nil {
-			fmt.Println("there is an error parsing file from Form!")
-			fmt.Println(err)
-			return
-		}
-		//Displays all the values send from the html form.
-		for key, value := range r.Form {
-			fmt.Print("%s = %s\n", key, value)
-		}
-		//Data on the files displayed on the console.
-		fmt.Printf("Uploaded File: %+v\n", handler.Filename)
-		fmt.Printf("FileSize: %+v\n", handler.Size)
-		fmt.Printf("MIME Header: %+v\n", handler.Header)
-
-		//Creating a temp file
-		//create name based on current time
-		theFileName := addTimeToFileName(handler.Filename)
-		createAndWriteFile(theFileName, file)
 		fmt.Fprintf(res, "Successfully uploaded File\n")
-		go printFile(theFileName)
+		multipleFiles(r)
 	}
 }
 func createAndWriteFile(theFileName string, file multipart.File) {
