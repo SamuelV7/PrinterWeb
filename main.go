@@ -82,13 +82,13 @@ func createAndWriteFile(theFileName string, file multipart.File) {
 		fmt.Println("There was an error reading file into fileByes")
 		fmt.Print(err)
 	}
-
 	defer f.Close()
 	f.Write(fileBytes)
 	//Write the file into temp from byte array
 
 	fmt.Println("Successfully saved file")
 }
+
 func main() {
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fs)
